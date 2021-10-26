@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Xunit;
 using System.Threading;
 using GitHub.DistributedTask.ObjectTemplating.Tokens;
+using Runner.Worker;
 using Pipelines = GitHub.DistributedTask.Pipelines;
 
 namespace GitHub.Runner.Common.Tests.Worker
@@ -110,6 +111,7 @@ namespace GitHub.Runner.Common.Tests.Worker
             hc.SetSingleton(_containerProvider.Object);
             hc.SetSingleton(_directoryManager.Object);
             hc.SetSingleton(_diagnosticLogManager.Object);
+            hc.SetSingleton<ILogger>(new FileLogger());
             hc.EnqueueInstance<IPagingLogger>(_logger.Object); // JobExecutionContext
             hc.EnqueueInstance<IPagingLogger>(_logger.Object); // Initial Job
             hc.EnqueueInstance<IPagingLogger>(_logger.Object); // step1

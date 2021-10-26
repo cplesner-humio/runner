@@ -21,6 +21,7 @@ using GitHub.Runner.Sdk;
 using GitHub.Runner.Worker.Container;
 using GitHub.Services.WebApi;
 using Newtonsoft.Json;
+using Runner.Worker;
 using ObjectTemplating = GitHub.DistributedTask.ObjectTemplating;
 using Pipelines = GitHub.DistributedTask.Pipelines;
 
@@ -48,6 +49,8 @@ namespace GitHub.Runner.Worker
         TaskResult? CommandResult { get; set; }
         CancellationToken CancellationToken { get; }
         GlobalContext Global { get; }
+
+        TimelineRecord Record { get; }
 
         Dictionary<string, string> IntraActionState { get; }
         Dictionary<string, VariableValue> JobOutputs { get; }
@@ -141,6 +144,8 @@ namespace GitHub.Runner.Worker
         private long _totalThrottlingDelayInMilliseconds = 0;
 
         public Guid Id => _record.Id;
+
+        public TimelineRecord Record => _record;
         public Guid EmbeddedId { get; private set; }
         public string ScopeName { get; private set; }
         public string SiblingScopeName { get; private set; }
@@ -273,9 +278,9 @@ namespace GitHub.Runner.Worker
                     {
                         Trace.Info($"'post' of '{actionRunner.DisplayName}' already push to child post step stack.");
                     }
-                    else 
+                    else
                     {
-                        Root.EmbeddedStepsWithPostRegistered[actionRunner.Action.Id] = actionRunner.Condition;    
+                        Root.EmbeddedStepsWithPostRegistered[actionRunner.Action.Id] = actionRunner.Condition;
                     }
                     return;
                 }
@@ -760,7 +765,10 @@ namespace GitHub.Runner.Worker
         // the rule is command messages - which should be crafted using strongly typed wrapper methods.
         public long Write(string tag, string message)
         {
+
             string msg = HostContext.SecretMasker.MaskSecrets($"{tag}{message}");
+            HostContext.GetService<ILogger>().Log(msg, this);
+
             long totalLines;
             lock (_loggerLock)
             {
