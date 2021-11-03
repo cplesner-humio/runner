@@ -318,7 +318,7 @@ namespace GitHub.Runner.Listener
 
                 IJobDispatcher jobDispatcher = null;
                 CancellationTokenSource messageQueueLoopTokenSource = CancellationTokenSource.CreateLinkedTokenSource(HostContext.RunnerShutdownToken);
-                
+
                 // Should we try to cleanup ephemeral runners
                 bool runOnceJobCompleted = false;
                 try
@@ -405,11 +405,14 @@ namespace GitHub.Runner.Listener
                             {
                                 if (autoUpdateInProgress == false)
                                 {
+                                    /*
                                     autoUpdateInProgress = true;
                                     var runnerUpdateMessage = JsonUtility.FromString<AgentRefreshMessage>(message.Body);
                                     var selfUpdater = HostContext.GetService<ISelfUpdater>();
                                     selfUpdateTask = selfUpdater.SelfUpdate(runnerUpdateMessage, jobDispatcher, !runOnce && HostContext.StartupType != StartupType.Service, HostContext.RunnerShutdownToken);
                                     Trace.Info("Refresh message received, kick-off selfupdate background process.");
+                                    */
+                                    Trace.Info("Refresh message received, skip autoupdate since we ignore it.");
                                 }
                                 else
                                 {

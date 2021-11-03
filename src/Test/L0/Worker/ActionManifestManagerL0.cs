@@ -671,7 +671,7 @@ namespace GitHub.Runner.Common.Tests.Worker
             {
                 Teardown();
             }
-        }        
+        }
 
         [Fact]
         [Trait("Level", "L0")]
